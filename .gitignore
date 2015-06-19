@@ -1,0 +1,4 @@
+.DS_Store
+cc-engine-gofmt/cc-engine-gofmt
+cc-engine-golint/cc-engine-golint
+cc-engine-govet/cc-engine-govet
