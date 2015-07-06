@@ -4,6 +4,7 @@ import "os"
 import "strings"
 import "encoding/json"
 import "path/filepath"
+import "io/ioutil"
 
 type Config map[string]interface{}
 
@@ -49,11 +50,17 @@ func GoFileWalk(rootPath string) (fileList []string, err error) {
 
 func LoadConfig() (config map[string]interface{}, err error) {
 	var parsedConfig map[string]interface{}
-	env_json := os.Getenv("ENGINE_CONFIG")
-	err = json.Unmarshal([]byte(env_json), &parsedConfig)
 
-	if err != nil {
-		return nil, err
+	if _, err := os.Stat("/config.json"); err == nil {
+		data, err := ioutil.ReadFile("/config.json")
+		if err != nil {
+			return nil, err
+		}
+		err = json.Unmarshal(data, &parsedConfig)
+
+		if err != nil {
+			return nil, err
+		}
 	}
 
 	return parsedConfig, nil
