@@ -8,15 +8,25 @@ import "io/ioutil"
 
 type Config map[string]interface{}
 
-type Position struct {
+type LinesOnlyPosition struct {
 	Begin int `json:"begin,omitempty"`
 	End   int `json:"end,omitempty"`
 }
 
+type LineColumnPosition struct {
+	Begin *LineColumn `json:"begin,omitempty"`
+	End   *LineColumn `json:"end,omitempty"`
+}
+
+type LineColumn struct {
+	Line   int `json:"line,omitempty"`
+	Column int `json:"column,omitempty"`
+}
+
 type Location struct {
-	Path      string    `json:"path"`
-	Lines     *Position `json:"lines,omitempty"`
-	Positions *Position `json:"positions,omitempty"`
+	Path      string              `json:"path"`
+	Lines     *LinesOnlyPosition  `json:"lines,omitempty"`
+	Positions *LineColumnPosition `json:"positions,omitempty"`
 }
 
 type Issue struct {
