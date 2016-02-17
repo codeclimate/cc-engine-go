@@ -44,9 +44,9 @@ type Warning struct {
 	Location    *Location `json:"location"`
 }
 
-func GoFileWalk(rootPath string) (fileList []string, err error) {
+func GoFileWalk(rootPath string, includePaths []string) (fileList []string, err error) {
 	walkFunc := func(path string, f os.FileInfo, err error) error {
-		if strings.HasSuffix(path, ".go") {
+		if strings.HasSuffix(path, ".go") && prefixInArr(path, includePaths) {
 			fileList = append(fileList, path)
 			return nil
 		}
@@ -76,6 +76,14 @@ func LoadConfig() (config map[string]interface{}, err error) {
 	return parsedConfig, nil
 }
 
+func IncludePaths(config map[string]interface{}) []string {
+	if strArr, ok := config["include_paths"].([]string); ok {
+		return strArr
+	} else {
+		return []string{"./"}
+	}
+}
+
 func PrintIssue(issue *Issue) (err error) {
 	jsonOutput, err := json.Marshal(issue)
 	if err != nil {
@@ -99,4 +107,13 @@ func PrintWarning(warning *Warning) (err error) {
 	os.Stdout.Write(jsonOutput)
 
 	return nil
+}
+
+func prefixInArr(str string, prefixes []string) bool {
+	for _, prefix := range prefixes {
+		if strings.HasPrefix(str, prefix) {
+			return true
+		}
+	}
+	return false
 }
