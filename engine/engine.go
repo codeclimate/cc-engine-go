@@ -1,5 +1,6 @@
 package engine
 
+import "fmt"
 import "os"
 import "strings"
 import "encoding/json"
@@ -76,12 +77,20 @@ func LoadConfig() (config map[string]interface{}, err error) {
 	return parsedConfig, nil
 }
 
-func IncludePaths(config map[string]interface{}) []string {
-	if strArr, ok := config["include_paths"].([]string); ok {
-		return strArr
-	} else {
-		return []string{"./"}
+func IncludePaths(rootPath string, config map[string]interface{}) []string {
+	if iArr, ok := config["include_paths"].([]interface{}); ok {
+		paths := make([]string, len(iArr))
+		for i, iVal := range iArr {
+			if strVal, ok := iVal.(string); ok {
+				paths[i] = filepath.Join(rootPath, strVal)
+			} else {
+				fmt.Fprintf(os.Stderr, "include_paths should be an array of strings, but an invalid value was encountered (%s) in %s\n", iVal, iArr)
+				os.Exit(1)
+			}
+		}
+		return paths
 	}
+	return []string{rootPath} // will be a prefix of any path
 }
 
 func PrintIssue(issue *Issue) (err error) {
