@@ -62,7 +62,7 @@ func GoFileWalk(rootPath string, includePaths []string) (fileList []string, err 
 func LoadConfig() (config map[string]interface{}, err error) {
 	var parsedConfig map[string]interface{}
 
-	if _, err := os.Stat("/config.json"); err == nil {
+	if _, err = os.Stat("/config.json"); err == nil {
 		data, err := ioutil.ReadFile("/config.json")
 		if err != nil {
 			return nil, err
@@ -74,7 +74,7 @@ func LoadConfig() (config map[string]interface{}, err error) {
 		}
 	}
 
-	return parsedConfig, nil
+	return parsedConfig, err
 }
 
 func IncludePaths(rootPath string, config map[string]interface{}) []string {
